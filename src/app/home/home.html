@@ -1,33 +1,64 @@
-<div class="container">
-  
-    <table class="table" style="margin: auto;width:700px;margin-top: 50px;">
-        <tr>
-            <th colspan="2" style="text-align: center;">
-                <h1>Search Area for the Weather</h1>
-            </th>
-        </tr>
-        <tr>
-            <td style="width: 80%;">
-                <input [(ngModel)]="city" placeholder="Enter city name" class="form-control" />
-            </td>
-            <td style="width: 20%;">
-                <button  style="width: 100%;" (click)="getWeather()" class="btn btn-primary">Get Weather</button>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <div *ngIf="weatherData" style="text-align: center; margin-top: 20px;">
-                    <h2>{{ weatherData.location.name }}, {{ weatherData.location.country }}</h2>
-                    <p>Temperature: {{ weatherData.current.temperature }} °C</p>
-                    <p>Condition: {{ weatherData.current.weather_descriptions[0] }}</p>
-                    <img [src]="weatherData.current.weather_icons[0]" alt="Weather icon" />
-                </div>
+<div class="home-container" [ngStyle]="{'background-color': getBackgroundColor()}">
+  <h2>🌤 Weather Dashboard</h2>
 
-                <p *ngIf="errorMessage" style="color: red; margin-top: 20px;">{{ errorMessage }}</p>
-            </td>
-        </tr>
-    </table>
-  
+  <!-- Search box -->
+  <div class="search-box">
+    <input type="text" [(ngModel)]="city" placeholder="Enter city..." />
+    <button (click)="getWeather()">Search</button>
+  </div>
 
+  <!-- 🌡️ Temperature Unit Toggle -->
+  <div class="unit-toggle">
+    <label>
+      <input type="radio" name="unit" value="C" [(ngModel)]="unit" /> °C
+    </label>
+    <label>
+      <input type="radio" name="unit" value="F" [(ngModel)]="unit" /> °F
+    </label>
+  </div>
 
-  
+  <!-- 🔁 Auto Refresh Toggle -->
+  <div class="refresh-control">
+    <button (click)="toggleAutoRefresh()">
+      {{ autoRefreshSub ? '⏹ Stop Auto Refresh' : '🔁 Start Auto Refresh (60s)' }}
+    </button>
+  </div>
+
+  <div *ngIf="isLoading">Loading weather data...</div>
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+  <!-- 🌤️ Weather Data Display -->
+  <div *ngIf="weatherData && weatherData.location" class="weather-card">
+    <h3>{{ weatherData.location.name }}, {{ weatherData.location.country }}</h3>
+
+    <p>Temperature: {{ displayTemp(weatherData.current.temperature) }}</p>
+    <p>Feels Like: {{ displayTemp(weatherData.current.feelslike) }}</p>
+    <p>Condition: {{ weatherData.current.weather_descriptions[0] }}</p>
+    <p>Humidity: {{ weatherData.current.humidity }}%</p>
+    <p>Wind: {{ weatherData.current.wind_speed }} km/h</p>
+
+    <!-- 🕓 Local Time -->
+    <p>Local Time: {{ weatherData.location.localtime }}</p>
+
+    <img
+      [src]="weatherData.current.weather_icons[0]"
+      alt="Weather icon"
+      width="80"
+    />
+  </div>
+
+  <!-- 🌍 Recent Searches -->
+  <div *ngIf="recentCities.length > 0" class="history">
+    <h4>Recent Searches:</h4>
+    <ul>
+      <li
+        *ngFor="let c of recentCities"
+        (click)="city = c; getWeather()"
+        style="cursor:pointer;"
+      >
+        {{ c }}
+      </li>
+    </ul>
+  </div>
+
+ 
