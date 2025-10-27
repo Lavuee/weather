@@ -1,0 +1,33 @@
+<div class="container">
+  
+    <table class="table" style="margin: auto;width:700px;margin-top: 50px;">
+        <tr>
+            <th colspan="2" style="text-align: center;">
+                <h1>Search Area for the Weather</h1>
+            </th>
+        </tr>
+        <tr>
+            <td style="width: 80%;">
+                <input [(ngModel)]="city" placeholder="Enter city name" class="form-control" />
+            </td>
+            <td style="width: 20%;">
+                <button  style="width: 100%;" (click)="getWeather()" class="btn btn-primary">Get Weather</button>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div *ngIf="weatherData" style="text-align: center; margin-top: 20px;">
+                    <h2>{{ weatherData.location.name }}, {{ weatherData.location.country }}</h2>
+                    <p>Temperature: {{ weatherData.current.temperature }} °C</p>
+                    <p>Condition: {{ weatherData.current.weather_descriptions[0] }}</p>
+                    <img [src]="weatherData.current.weather_icons[0]" alt="Weather icon" />
+                </div>
+
+                <p *ngIf="errorMessage" style="color: red; margin-top: 20px;">{{ errorMessage }}</p>
+            </td>
+        </tr>
+    </table>
+  
+
+
+  
